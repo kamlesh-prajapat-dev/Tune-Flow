@@ -57,6 +57,7 @@ kotlin {
             implementation("io.ktor:ktor-client-okhttp:2.3.10")
 
             implementation("androidx.media3:media3-exoplayer:1.8.0")
+            implementation("cafe.adriel.voyager:voyager-hilt:1.0.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)

@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import org.example.project.player.AudioPlayer
 
 class MainActivity : ComponentActivity() {
-    private val player by lazy { AudioPlayer() }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -17,7 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            App(player)
+            App()
         }
     }
 }

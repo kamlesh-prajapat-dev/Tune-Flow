@@ -6,8 +6,8 @@ import org.example.project.player.AudioPlayer
 import org.example.project.ui.TuneFlow
 
 @Composable
-fun App(player: AudioPlayer) {
+fun App() {
     MaterialTheme {
-        TuneFlow(player)
+        TuneFlow()
     }
 }

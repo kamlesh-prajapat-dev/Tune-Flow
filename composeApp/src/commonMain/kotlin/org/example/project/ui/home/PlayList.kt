@@ -28,40 +28,33 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import org.example.project.domain.model.Song
-import org.example.project.player.AudioPlayer
 import org.example.project.ui.music.MusicPlayerScreen
 import org.example.project.ui.music.MusicViewModel
+import org.example.project.ui.search.SearchScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlayList(list: List<Song>, player: AudioPlayer, viewModel: HomeViewModel) {
+fun PlayList(viewModel: HomeViewModel) {
 
     val isDropDown by viewModel.isDropDown.collectAsState()
     val sortedList by viewModel.sortedList.collectAsState()
-
-    viewModel.initialize(list)
+    val navigator = LocalNavigator.currentOrThrow
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -78,7 +71,11 @@ fun PlayList(list: List<Song>, player: AudioPlayer, viewModel: HomeViewModel) {
 
                 actions = {
                     IconButton(
-                        onClick = {}
+                        onClick = {
+                            navigator.push(SearchScreen(
+                                viewModel
+                            ))
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -93,7 +90,7 @@ fun PlayList(list: List<Song>, player: AudioPlayer, viewModel: HomeViewModel) {
         }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(top = 100.dp)
+            modifier = Modifier.fillMaxSize().padding(it)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth()
@@ -138,6 +135,7 @@ fun PlayList(list: List<Song>, player: AudioPlayer, viewModel: HomeViewModel) {
                                     text = { Text(text = "By song name", fontSize = 16.sp) },
                                     onClick = { /* Handle sort by song name! */
                                         viewModel.sortByName()
+                                        viewModel.onChangeDD(false)
                                     }
                                 )
 
@@ -147,6 +145,7 @@ fun PlayList(list: List<Song>, player: AudioPlayer, viewModel: HomeViewModel) {
                                     onClick = {
                                         /* Handle sort by time duration! */
                                         viewModel.sortByDuration()
+                                        viewModel.onChangeDD(false)
                                     },
                                 )
                             }
@@ -161,8 +160,8 @@ fun PlayList(list: List<Song>, player: AudioPlayer, viewModel: HomeViewModel) {
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
 
-                items(sortedList) {
-                    SongItem(it, player)
+                items(sortedList) {it ->
+                    SongItem(songItem = it, sortedList)
                 }
             }
         }
@@ -171,20 +170,21 @@ fun PlayList(list: List<Song>, player: AudioPlayer, viewModel: HomeViewModel) {
 
 @Composable
 fun SongItem(
-   songItem: Song,
-   player: AudioPlayer
+   songItem: Song, list: List<Song>
 ) {
     val navigator = LocalNavigator.currentOrThrow
-    val musicViewModel: MusicViewModel = viewModel()
+
+    val viewModel: MusicViewModel = viewModel()
 
     Card(
         modifier = Modifier.fillMaxWidth()
             .clickable(
                 onClick = {
+                    viewModel.initializeList(list)
+                    viewModel.onChangeSongItem(songItem)
+
                     navigator.push(MusicPlayerScreen(
-                        songItem = songItem,
-                        player = player,
-                        viewModel = musicViewModel
+                        viewModel
                     ))
                 }
             ),
@@ -229,11 +229,10 @@ fun SongItem(
 
                     Text(
                         modifier = Modifier.padding(horizontal = 10.dp),
-                        text = "${songItem.duration}"
+                        text = songItem.duration
                     )
                 }
             }
         }
-
     }
 }

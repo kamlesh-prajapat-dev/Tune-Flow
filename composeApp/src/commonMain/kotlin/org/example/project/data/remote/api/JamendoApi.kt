@@ -9,7 +9,7 @@ import org.example.project.utils.ApiResult
 
 object JamendoApi {
     private const val BASE_URL = "https://api.jamendo.com/v3.0"
-    private const val CLIENT_ID = "Your_Client_id"
+    private const val CLIENT_ID = "792cc03a"
     private val client get() = HttpClientProvider.client
     suspend fun getTracks(limit: Int = 20): ApiResult<JamendoResponse> = safeApiCall {
 

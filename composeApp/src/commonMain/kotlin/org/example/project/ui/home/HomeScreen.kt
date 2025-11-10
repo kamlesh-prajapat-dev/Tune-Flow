@@ -4,6 +4,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.core.screen.Screen
 import org.example.project.player.AudioPlayer
 import org.example.project.ui.components.ErrorView
@@ -12,13 +13,14 @@ import org.example.project.ui.music.MusicViewModel
 import org.example.project.utils.ApiResult
 
 class HomeScreen(
-    val viewModel: HomeViewModel,
-    val player: AudioPlayer
 ) : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
+
+        val viewModel: HomeViewModel = viewModel()
+
 
         val state by viewModel.uiState.collectAsState()
 
@@ -36,7 +38,8 @@ class HomeScreen(
 
             is ApiResult.Success -> {
                 val tracks = (state as ApiResult.Success).data
-                PlayList(tracks, player, viewModel)
+                viewModel.initialize(tracks)
+                PlayList(viewModel)
             }
         }
     }

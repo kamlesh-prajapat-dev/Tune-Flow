@@ -7,6 +7,6 @@ import org.example.project.player.AudioPlayer
 import org.example.project.ui.home.HomeScreen
 
 @Composable
-fun TuneFlow(player: AudioPlayer) {
-    Navigator(screen = HomeScreen(viewModel = viewModel(), player))
+fun TuneFlow() {
+    Navigator(screen = HomeScreen())
 }

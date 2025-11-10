@@ -67,4 +67,29 @@ class HomeViewModel(
             }
         }
     }
+
+    private val _filteredLists = MutableStateFlow<List<Song>>(emptyList())
+    val filteredList: StateFlow<List<Song>> = _filteredLists.asStateFlow()
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    fun onSearchQueryChange(query: String) {
+        _searchQuery.value = query
+        filterNotes()
+    }
+
+    private fun filterNotes() {
+        val query = _searchQuery.value.lowercase()
+        if (query.isBlank()) return
+
+        val filteredList = _sortedList.value.filter { noteEntry ->
+            noteEntry.title.lowercase().contains(query)
+            noteEntry.title.lowercase().contains(query)
+        }
+
+        _filteredLists.update {
+            filteredList
+        }
+    }
+
 }

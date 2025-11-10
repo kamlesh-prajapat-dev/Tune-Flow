@@ -30,7 +30,7 @@ actual class AudioPlayer actual constructor() {
 
     init {
         // Start JavaFX toolkit once
-        Platform.startup {}
+
     }
 
     actual fun play(url: String) {
